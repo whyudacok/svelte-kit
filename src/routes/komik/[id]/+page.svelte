@@ -35,10 +35,14 @@
     
     <div class="mb-4">
       <h2 class="text-xl font-semibold">Info</h2>
-      <p>Rating: {manga.rating}</p>
-      {#each Object.entries(manga.info) as [key, value]}
-        <p>{key}: {value}</p>
-      {/each}
+      <p>Judul Alternatif: {manga.info['Judul Alternatif']}</p>
+      <p>Status: {manga.info['Status']}</p>
+      <p>Jenis Komik: {manga.info['Jenis Komik']}</p>
+      <p>Author: {manga.info['Author']}</p>
+      <p>Artis: {manga.info['Artis']}</p>
+      <p>Rilis: {manga.info['Rilis']}</p>
+      <p>Serialisasi: {manga.info['Serialisasi']}</p>
+      <p>Jumlah Pembaca: {manga.info['Jumlah Pembaca']}</p>
     </div>
 
     <div class="mb-4">
