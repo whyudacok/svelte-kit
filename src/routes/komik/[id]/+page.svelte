@@ -1,7 +1,6 @@
 <script context="module" lang="ts">
   export { load } from './+page.js';
 </script>
-
 <script>
   export let manga;
 
