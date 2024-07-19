@@ -6,7 +6,7 @@
 
   // Fetch data from the API
   onMount(async () => {
-    const response = await fetch('https://api.koranime.fun/update/1');
+    const response = await fetch('https://api.koranime.fun/update/2');
     const data = await response.json();
     updates = data.updates;
     popularComics = data.popularComics;
