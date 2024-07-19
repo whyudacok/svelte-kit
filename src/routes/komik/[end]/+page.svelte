@@ -9,11 +9,16 @@
   onMount(async () => {
     try {
       const response = await fetch(`https://api.koranime.fun/manga/${params.end}`);
+      console.log('Response status:', response.status);
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
         throw new Error('Failed to fetch data');
       }
       manga = await response.json();
+      console.log('Manga data:', manga);
     } catch (err) {
+      console.error('Fetch error:', err);
       error = 'Failed to load manga data. Please try again later.';
     }
   });
