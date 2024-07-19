@@ -2,39 +2,36 @@
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
 
-  let manga = {};
-  let meta = {};
+  let manga = null;
+  let error = null;
+  let mangaId;
 
+  $: {
+    mangaId = $page.params.id;
+  }
+
+  // Fetch data from the API
   onMount(async () => {
-    const id = $page.params.id; // Get the dynamic parameter from the page store
-    const apiUrl = `https://api.koranime.fun/manga/${id}`;
-
     try {
-      const response = await fetch(apiUrl);
+      const response = await fetch(`https://api.koranime.fun/manga/${mangaId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }
       manga = await response.json();
-
-      meta = {
-        title: manga.title || 'Komik Details',
-        description: manga.synopsis || 'No description available',
-        url: `https://your-site-url.com/komik/${id}`
-      };
-    } catch (error) {
-      console.error('Error fetching manga data:', error);
+    } catch (err) {
+      error = 'Failed to load manga data. Please try again later.';
     }
   });
 </script>
 
 <svelte:head>
-  <title>{meta.title}</title>
-  <meta name="description" content={meta.description} />
-  <meta property="og:title" content={meta.title} />
-  <meta property="og:description" content={meta.description} />
-  <meta property="og:url" content={meta.url} />
+  <title>{manga ? manga.title.replace('Komik', '') : 'Loading...'}</title>
+  <meta name="description" content={manga ? manga.synopsis : 'Loading...'} />
+  <meta property="og:title" content={manga ? manga.title.replace('Komik', '') : 'Loading...'} />
+  <meta property="og:description" content={manga ? manga.synopsis : 'Loading...'} />
+  <meta property="og:url" content={manga ? `https://your-site-url.com/komik/${mangaId}` : 'https://your-site-url.com/komik'} />
+  <meta property="og:image" content={manga ? manga.thumbnail : 'https://your-site-url.com/default-thumbnail.jpg'} />
 </svelte:head>
-
 
 <main class="p-8">
   {#if error}
