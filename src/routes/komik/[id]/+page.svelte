@@ -1,15 +1,30 @@
-<script context="module" lang="ts">
-  export { load } from './+page.js';
-</script>
 <script>
-  export let manga;
+  import { onMount } from 'svelte';
+  import { page } from '$app/stores';
 
-  // Define meta tags
-  $: meta = {
-    title: manga.title,
-    description: manga.synopsis,
-    url: `https://your-site-url.com/komik/${manga.id}`
-  };
+  let manga = {};
+  let meta = {};
+
+  onMount(async () => {
+    const id = $page.params.id; // Get the dynamic parameter from the page store
+    const apiUrl = `https://api.koranime.fun/manga/${id}`;
+
+    try {
+      const response = await fetch(apiUrl);
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      manga = await response.json();
+
+      meta = {
+        title: manga.title || 'Komik Details',
+        description: manga.synopsis || 'No description available',
+        url: `https://your-site-url.com/komik/${id}`
+      };
+    } catch (error) {
+      console.error('Error fetching manga data:', error);
+    }
+  });
 </script>
 
 <svelte:head>
@@ -19,6 +34,8 @@
   <meta property="og:description" content={meta.description} />
   <meta property="og:url" content={meta.url} />
 </svelte:head>
+
+
 <main class="p-8">
   {#if error}
     <p class="text-red-500">{error}</p>
