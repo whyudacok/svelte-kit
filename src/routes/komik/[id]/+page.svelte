@@ -1,29 +1,25 @@
-<script>
-  import { onMount } from 'svelte';
-  import { page } from '$app/stores';
-
-  let manga = null;
-  let error = null;
-  let mangaId;
-
-  $: {
-    mangaId = $page.params.id;
-  }
-
-  // Fetch data from the API
-  onMount(async () => {
-    try {
-      const response = await fetch(`https://api.koranime.fun/manga/${mangaId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
-      }
-      manga = await response.json();
-    } catch (err) {
-      error = 'Failed to load manga data. Please try again later.';
-    }
-  });
+<script context="module" lang="ts">
+  export { load } from './+page.js';
 </script>
 
+<script>
+  export let manga;
+
+  // Define meta tags
+  $: meta = {
+    title: manga.title,
+    description: manga.synopsis,
+    url: `https://your-site-url.com/komik/${manga.id}`
+  };
+</script>
+
+<svelte:head>
+  <title>{meta.title}</title>
+  <meta name="description" content={meta.description} />
+  <meta property="og:title" content={meta.title} />
+  <meta property="og:description" content={meta.description} />
+  <meta property="og:url" content={meta.url} />
+</svelte:head>
 <main class="p-8">
   {#if error}
     <p class="text-red-500">{error}</p>
