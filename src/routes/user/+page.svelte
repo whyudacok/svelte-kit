@@ -1,7 +1,3 @@
-<!-- src/routes/user/+page.svelte -->
-<script>
-  // Jika Anda memerlukan JavaScript, tambahkan di sini
-</script>
 
 <main class="container mx-auto p-8">
   <h1 class="text-4xl font-bold mb-8">User Page</h1>
