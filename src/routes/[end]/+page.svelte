@@ -5,18 +5,23 @@
   let animeData = {};
   let loading = true;
   let error = false;
+  let notFound = false;
 
   $: endpoint = $page.params.end;
 
   onMount(async () => {
     try {
       const res = await fetch(`https://cihuyy-api.vercel.app/api/anime/nonton/${endpoint}`);
-      const data = await res.json();
+      if (res.ok) {
+        const data = await res.json();
 
-      if (data.status) {
-        animeData = data.data;
+        if (data.status && data.data) {
+          animeData = data.data;
+        } else {
+          notFound = true;
+        }
       } else {
-        error = true;
+        notFound = true;
       }
     } catch (err) {
       error = true;
@@ -30,19 +35,21 @@
   <p>Loading...</p>
 {:else if error}
   <p>Error fetching data.</p>
+{:else if notFound}
+  <p>404 Not Found. Endpoint not valid or data does not exist.</p>
 {:else}
   <div>
     <h1>{animeData.judul} - Episode {animeData.episodeNumber}</h1>
     <p>{animeData.description}</p>
     
     <h2>Video Utama</h2>
-    <a href="{animeData.vidutama}" target="_blank">Tonton Video Utama</a>
+    <a href="{animeData.vidutama}" target="_blank">{animeData.vidutama}</a>
     
     <h3>Server Video</h3>
     <ul>
       {#each animeData.video as vid}
         <li>
-          <a href="{vid.src}" target="_blank">{vid.server}</a>
+          <a href="{vid.src}" target="_blank">{vid.server} - {vid.src}</a>
         </li>
       {/each}
     </ul>
