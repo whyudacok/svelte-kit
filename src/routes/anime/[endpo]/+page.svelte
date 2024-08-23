@@ -1,4 +1,5 @@
 <script>
+  const apiUrl = import.meta.env.VITE_API_URL
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
 
@@ -12,7 +13,7 @@
 
   onMount(async () => {
     try {
-      const response = await fetch(`https://cihuyy-api.vercel.app/api/anime/anime/${animeId}`);
+      const response = await fetch(`${apiUrl}/api/anime/anime/${animeId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }
