@@ -1,5 +1,4 @@
 <script>
-  const apiUrl = import.meta.env.VITE_API_URL
   import { onMount } from 'svelte';
 
   let animeData = [];
@@ -19,7 +18,7 @@
         animeData = JSON.parse(cachedData);
       } else {
         // Fetch data dari API dan simpan ke cache
-        const res = await fetch('${apiUrl}/api/anime/latest');
+        const res = await fetch('https://cihuyy-api.vercel.app/api/anime/latest');
         const data = await res.json();
         if (data.status) {
           animeData = data.data.results;
