@@ -1,91 +1,102 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount } from 'svelte';
+  import { page } from '$app/stores';
 
   let animeData = null;
-  let loading = true;
   let error = null;
-  let { endpo } = $page.params;
+  let animeId;
+
+  $: {
+    animeId = $page.params.endpo;  // Ambil parameter dari URL
+  }
 
   onMount(async () => {
     try {
-      const res = await fetch(`https://cihuyy-api.vercel.app/api/anime/anime/${endpo}`);
-
-      // Cek status respons
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
+      const response = await fetch(`https://cihuyy-api.vercel.app/api/anime/anime/${animeId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
       }
-
-      const data = await res.json();
-
-      if (data.status) {
-        animeData = data.data;
-      } else {
+      const data = await response.json();
+      animeData = data.status ? data.data : null;
+      if (!animeData) {
         error = "Anime data not found or error in fetching.";
       }
     } catch (err) {
-      console.error("Failed to fetch data:", err);
-      error = "An error occurred while fetching the anime data.";
-    } finally {
-      loading = false;
+      console.error('Failed to fetch data:', err);
+      error = 'An error occurred while fetching the anime data.';
     }
   });
 </script>
 
-{#if loading}
-  <p>Loading...</p>
-{:else if error}
-  <p>{error}</p>
-{:else}
-  <h1>{animeData.title}</h1>
-  <p><strong>Rating:</strong> {animeData.rating}</p>
-  <p><strong>Status:</strong> {animeData.info.Status}</p>
-  <p><strong>Studio:</strong> <a href={animeData.info.Studio_link}>{animeData.info.Studio}</a></p>
-  <p><strong>Durasi:</strong> {animeData.info.Durasi}</p>
-  <p><strong>Musim:</strong> <a href={animeData.info.Musim_link}>{animeData.info.Musim}</a></p>
+<svelte:head>
+  <title>{animeData ? animeData.title : 'Loading...'}</title>
+  <meta name="description" content={animeData ? animeData.sinopsis : 'Loading...'} />
+  <meta property="og:title" content={animeData ? animeData.title : 'Loading...'} />
+  <meta property="og:description" content={animeData ? animeData.sinopsis : 'Loading...'} />
+  <meta property="og:url" content={animeData ? `https://your-site-url.com/anime/${animeId}` : 'https://your-site-url.com/anime'} />
+  <meta property="og:image" content={animeData ? animeData.thumbnail : 'https://your-site-url.com/default-thumbnail.jpg'} />
+</svelte:head>
 
-  <h2>Genre</h2>
-  <ul>
-    {#each animeData.genre as genre}
-      <li><a href={genre.link}>{genre.name}</a></li>
-    {/each}
-  </ul>
+<main>
+  {#if error}
+    <p>{error}</p>
+  {:else if !animeData}
+    <p>Loading...</p>
+  {:else}
+    <h1>{animeData.title}</h1>
+    <img src={animeData.thumbnail} alt={animeData.title} />
 
-  <h2>Sinopsis</h2>
-  <p>{animeData.sinopsis}</p>
+    <h2>Info</h2>
+    <p><strong>Rating:</strong> {animeData.rating}</p>
+    <p><strong>Status:</strong> {animeData.info.Status}</p>
+    <p><strong>Studio:</strong> <a href={animeData.info.Studio_link}>{animeData.info.Studio}</a></p>
+    <p><strong>Duration:</strong> {animeData.info.Durasi}</p>
+    <p><strong>Season:</strong> <a href={animeData.info.Musim_link}>{animeData.info.Musim}</a></p>
 
-  <h2>Episode List</h2>
-  <ul>
-    {#each animeData.eplister as episode}
-      <li>
-        <a href={episode.link}>{episode.title} - {episode.epnum}</a>
-        <p>{episode.date}</p>
-      </li>
-    {/each}
-  </ul>
+    <h2>Genres</h2>
+    <ul>
+      {#each animeData.genre as genre}
+        <li><a href={genre.link}>{genre.name}</a></li>
+      {/each}
+    </ul>
 
-  <h2>Recommendations</h2>
-  <ul>
-    {#each animeData.recommendations as rec}
-      <li>
-        <a href={rec.link}>
-          <img src={rec.img} alt={rec.title} width="100" />
-          {rec.title} ({rec.type}) - {rec.epx}
-        </a>
-      </li>
-    {/each}
-  </ul>
+    <h2>Synopsis</h2>
+    <p>{animeData.sinopsis}</p>
 
-  <h2>Download Links</h2>
-  <ul>
-    {#each animeData.downloads as download}
-      <li>
-        <h3>{download.server}</h3>
-        <ul>
-          {#each download.links as link}
-            <li><a href={link.link}>{link.title}</a></li>
-          {/each}
-        </ul>
-      </li>
-    {/each}
-  </ul>
-{/if}
+    <h2>Episode List</h2>
+    <ul>
+      {#each animeData.eplister as episode}
+        <li>
+          <a href={episode.link}>{episode.title} - {episode.epnum}</a>
+          <p>{episode.date}</p>
+        </li>
+      {/each}
+    </ul>
+
+    <h2>Recommendations</h2>
+    <ul>
+      {#each animeData.recommendations as rec}
+        <li>
+          <a href={rec.link}>
+            <img src={rec.img} alt={rec.title} width="100" />
+            {rec.title} ({rec.type}) - {rec.epx}
+          </a>
+        </li>
+      {/each}
+    </ul>
+
+    <h2>Download Links</h2>
+    <ul>
+      {#each animeData.downloads as download}
+        <li>
+          <h3>{download.server}</h3>
+          <ul>
+            {#each download.links as link}
+              <li><a href={link.link}>{link.title}</a></li>
+            {/each}
+          </ul>
+        </li>
+      {/each}
+    </ul>
+  {/if}
+</main>
