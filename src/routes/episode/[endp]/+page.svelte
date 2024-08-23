@@ -1,12 +1,13 @@
 <script>
   import { onMount } from 'svelte';
+  import { error } from '@sveltejs/kit';
   import { page } from '$app/stores';
 
   let animeData = {};
   let loading = true;
-  let error = false;
   let notFound = false;
-  
+
+  // Mengambil parameter endpoint dari URL
   $: endpoint = $page.params.endp;
 
   onMount(async () => {
@@ -24,7 +25,8 @@
         notFound = true; // Respon tidak ok
       }
     } catch (err) {
-      error = true;
+      console.error('Error fetching data:', err);
+      notFound = true;
     } finally {
       loading = false;
     }
@@ -33,8 +35,6 @@
 
 {#if loading}
   <p>Loading...</p>
-{:else if error}
-  <p>Error fetching data.</p>
 {:else if notFound}
   <p>404 Not Found. Endpoint not valid or data does not exist.</p>
 {:else}
