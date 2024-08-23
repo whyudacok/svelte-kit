@@ -1,4 +1,5 @@
 <script>
+  const Logo import.meta.env.VITE_WEBSITE_LOGO_URL;
   import { onMount } from 'svelte';
 
   onMount(() => {
@@ -24,12 +25,13 @@
     // Cleanup the event listener on component destroy
     return () => window.removeEventListener("scroll", handleScroll);
   });
+
 </script>
 
 <nav id="navbar" class="flex justify-between items-center text-white m-auto fixed top-0 left-0 right-0 z-30 transition-all duration-300 h-[75px] px-[3%] lg:pl-[7%] xl:pl-[6.5%] bg-transparent translate-y-0">
   <div class="flex items-center gap-8">
     <a href="/">
-      <img alt="logo" fetchpriority="high" width="50" height="50" decoding="async" data-nimg="1" class="w-32 !h-[36px] mt-1" style="color: transparent;" src="/logo.svg" />
+      <img alt="logo" fetchpriority="high" width="50" height="50" decoding="async" data-nimg="1" class="w-32 !h-[36px] mt-1" style="color: transparent;" src="{Logo}" />
     </a>
   </div>
   <div class="flex items-center gap-2">
