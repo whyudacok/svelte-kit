@@ -11,7 +11,7 @@
 
       if (scrollTop > lastScrollTop && scrollTop > 50) {
         // Saat di-scroll ke bawah
-        navbar.classList.add("bg-black", "bg-opacity-80", "backdrop-blur-md", "h-[62px]");
+        navbar.classList.add("bg-black", "bg-opacity-60", "backdrop-blur-sm", "h-[62px]");
       } else if (scrollTop < lastScrollTop && scrollTop <= 50) {
         // Saat di-scroll ke atas
         navbar.classList.remove("bg-black", "bg-opacity-80", "backdrop-blur-md", "h-[62px]");
