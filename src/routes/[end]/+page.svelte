@@ -10,7 +10,7 @@
 
   onMount(async () => {
     try {
-      const res = await fetch(`https://cihuyy-api.vercel.app/api/anime/${endpoint}`);
+      const res = await fetch(`https://cihuyy-api.vercel.app/api/anime/nonton/${endpoint}`);
       const data = await res.json();
 
       if (data.status) {
