@@ -21,7 +21,7 @@
 
 {#if loading}
   <div class="flex justify-center items-center">
-    <img src="/loading.gif" alt="Loading" />
+    <img src="https://c.tenor.com/ABkcBqwf1ZgAAAAC/tenor.gif" alt="Loading" />
   </div>
 {:else}
   <div class="scroll-smooth flex flex-col mx-auto my-1 md:my-0">
