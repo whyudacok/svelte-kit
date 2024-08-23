@@ -35,19 +35,8 @@
 </script>
 
 {#if loading}
-  <div class="scroll-smooth flex flex-col mx-auto my-1 md:my-0">
-    <div class="flex items-center gap-2 px-3 xl:px-0">
-      <span class="w-[0.35rem] h-6 md:w-[0.3rem] rounded-md bg-white"></span>
-      <h1 class="text-[19px] sm:text-[22px] my-4 font-medium md:font-semibold">Anime update</h1>
-    </div>
-    <div class="relative flex flex-nowrap overflow-scroll overflow-y-hidden gap-3 scrollbar-hide pl-[0.75rem] xl:pl-0">
-      {#each Array(10).fill(0) as _}
-      <div class="w-[105px] sm:w-[135px] md:w-[155px] xl:w-[175px] h-[160px] sm:h-[190px] md:h-[230px] xl:h-[255px] rounded-xl xl:rounded-2xl bg-gray-300 animate-pulse">
-        <div class="w-full h-full bg-gray-200 rounded-xl xl:rounded-2xl"></div>
-        <div class="absolute bottom-0 left-0 right-0 p-2 bg-gray-200 rounded-b-xl"></div>
-      </div>
-      {/each}
-    </div>
+  <div class="flex justify-center items-center">
+    <img class="h-40 w-40" src="https://c.tenor.com/ABkcBqwf1ZgAAAAC/tenor.gif" alt="Loading" />
   </div>
 {:else}
   <div class="scroll-smooth flex flex-col mx-auto my-1 md:my-0">
