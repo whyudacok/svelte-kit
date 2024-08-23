@@ -35,7 +35,7 @@
 </script>
 
 {#if loading}
-  <div class="flex justify-center items-center">
+  <div class="flex justify-center items-center h-3 w-3">
     <img src="https://c.tenor.com/ABkcBqwf1ZgAAAAC/tenor.gif" alt="Loading" />
   </div>
 {:else}
