@@ -1,9 +1,8 @@
 <script>
-  import Navbar from '$lib/components/Navbar.svelte'; // atau ../components/Navbar.svelte jika tidak menggunakan alias
-  import Footer from '$lib/components/Footer.svelte'; // atau ../components/Footer.svelte
-  import '../app.css'; // pastikan jalur ini benar
+  import Navbar from '../components/Navbar.svelte'; // jalur relatif dari src/routes ke src/components
+  import Footer from '../components/Footer.svelte'; // jalur relatif dari src/routes ke src/components
+  import '../app.css'; // jalur relatif dari src/routes ke src/app.css
 </script>
-
 
 <Navbar />
 <main>
