@@ -1,7 +1,6 @@
 
 <script>
   import AnimeUpdate from '../components/AnimeUpdate.svelte';
-  import komikrom from '../components/KomikRan.svelte';
 </script>
 
 <div class="flex flex-row transition-all duration-300 ease-in-out">
@@ -229,7 +228,6 @@
             <div></div>
             <div>
                 <AnimeUpdate />
-                <komikrom />
               <div class="scroll-smooth flex flex-col mx-auto my-1 md:my-0">
                 <div class="flex items-center gap-2 px-3 xl:px-0">
                   <span class="w-[0.35rem] h-6 md:w-[0.3rem] rounded-md bg-white"></span>
