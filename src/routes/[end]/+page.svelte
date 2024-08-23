@@ -1,30 +1,30 @@
 <script>
   import { onMount } from 'svelte';
-  import { page } from '$app/stores';
+  import { error } from '@sveltejs/kit';
 
-  let animeData = {};
+  export let params;
+  let animeData = null;
   let loading = true;
-  let error = false;
   let notFound = false;
 
-  $: endpoint = $page.params.end;
-
   onMount(async () => {
+    const endpoint = `https://cihuyy-api.vercel.app/api/anime/nonton/${params.end}`;
+    
     try {
-      const res = await fetch(`https://cihuyy-api.vercel.app/api/anime/nonton/${endpoint}`);
-      if (res.ok) {
-        const data = await res.json();
+      const res = await fetch(endpoint);
+      if (!res.ok) {
+        throw new Error('Failed to fetch');
+      }
+      const data = await res.json();
 
-        if (data.status && data.data) {
-          animeData = data.data;
-        } else {
-          notFound = true;
-        }
+      if (data.status) {
+        animeData = data.data;
       } else {
         notFound = true;
       }
     } catch (err) {
-      error = true;
+      console.error('Error fetching data:', err);
+      notFound = true;
     } finally {
       loading = false;
     }
@@ -33,37 +33,21 @@
 
 {#if loading}
   <p>Loading...</p>
-{:else if error}
-  <p>Error fetching data.</p>
 {:else if notFound}
-  <p>404 Not Found. Endpoint not valid or data does not exist.</p>
+  <p>404 Not Found</p>
 {:else}
-  <div>
-    <h1>{animeData.judul} - Episode {animeData.episodeNumber}</h1>
-    <p>{animeData.description}</p>
-    
-    <h2>Video Utama</h2>
-    <a href="{animeData.vidutama}" target="_blank">{animeData.vidutama}</a>
-    
-    <h3>Server Video</h3>
-    <ul>
-      {#each animeData.video as vid}
-        <li>
-          <a href="{vid.src}" target="_blank">{vid.server} - {vid.src}</a>
-        </li>
-      {/each}
-    </ul>
+  <h1>{animeData.judul}</h1>
+  <p>Episode: {animeData.episodeNumber}</p>
+  <p>Rating: {animeData.rating}</p>
+  <p>Description: {animeData.description}</p>
 
-    <h3>Episodes</h3>
-    <ul>
-      {#each animeData.episodes as episode}
-        <li>
-          <a href="{episode.link}">{episode.judul}</a>
-        </li>
-      {/each}
-    </ul>
-
-    <h3>Detail</h3>
+  <h2>Video</h2>
+  <ul>
+    {#each animeData.video as video}
+      <li>{video.server}: <a href={video.src} target="_blank" rel="noopener noreferrer">{video.src}</a></li>
+    {/each}
+  </ul>
+<h3>Detail</h3>
     <ul>
       <li>Status: {animeData.detail["Status"]}</li>
       <li>Studio: <a href="{animeData.detail.Studio.link}">{animeData.detail.Studio.text}</a></li>
@@ -73,24 +57,23 @@
       <li>Jenis: {animeData.detail["Jenis"]}</li>
       <li>Pengarang: <a href="{animeData.detail.Pengarang.link}">{animeData.detail.Pengarang.text}</a></li>
     </ul>
-
-    <h3>Genres</h3>
-    <ul>
-      {#each animeData.genres as genre}
-        <li>
-          <a href="{genre.link}">{genre.genre}</a>
-        </li>
-      {/each}
-    </ul>
-
-    <h3>Download Links</h3>
-    {#each animeData.serverdl as server}
-      <h4>{server.server}</h4>
-      <ul>
-        {#each server.links as link}
-          <li><a href="{link.url}" target="_blank">{link.text}</a></li>
-        {/each}
-      </ul>
+  <h2>Episodes</h2>
+  <ul>
+    {#each animeData.episodes as episode}
+      <li><a href={episode.link}>{episode.judul}</a></li>
     {/each}
-  </div>
+  </ul>
+
+  <h2>Download Links</h2>
+  <ul>
+    {#each animeData.serverdl as server}
+      <li>{server.server}
+        <ul>
+          {#each server.links as link}
+            <li><a href={link.url} target="_blank" rel="noopener noreferrer">{link.text}</a></li>
+          {/each}
+        </ul>
+      </li>
+    {/each}
+  </ul>
 {/if}
