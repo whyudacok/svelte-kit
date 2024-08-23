@@ -3,13 +3,27 @@
 
   let animeData = [];
   let loading = true;
+  const CACHE_KEY = 'animeDataCache';
+  const CACHE_DURATION = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
 
   onMount(async () => {
+    const now = Date.now();
+    const cache = localStorage.getItem(CACHE_KEY);
+    const cacheTime = localStorage.getItem(`${CACHE_KEY}_time`);
+
+    if (cache && cacheTime && (now - cacheTime < CACHE_DURATION)) {
+      animeData = JSON.parse(cache);
+      loading = false;
+      return;
+    }
+
     try {
       const res = await fetch("https://cihuyy-api.vercel.app/api/anime/latest");
       const data = await res.json();
       if (data.status) {
         animeData = data.data.results;
+        localStorage.setItem(CACHE_KEY, JSON.stringify(animeData));
+        localStorage.setItem(`${CACHE_KEY}_time`, now.toString());
       }
     } catch (error) {
       console.error("Failed to fetch data:", error);
@@ -21,7 +35,7 @@
 
 {#if loading}
   <div class="flex justify-center items-center">
-    <img src="https://c.tenor.com/ABkcBqwf1ZgAAAAC/tenor.gif" alt="Loading" />
+    <img width="50" height="50" src="https://c.tenor.com/ABkcBqwf1ZgAAAAC/tenor.gif" alt="Loading" />
   </div>
 {:else}
   <div class="scroll-smooth flex flex-col mx-auto my-1 md:my-0">
@@ -42,36 +56,36 @@
       </span>
       <div class="relative flex flex-nowrap overflow-scroll overflow-y-hidden gap-3 scrollbar-hide pl-[0.75rem] xl:pl-0" id="Popular This Season" style="cursor: auto;">
         {#each animeData as anime}
-        <a href="{anime.link}" style="cursor: pointer;">
-                      <div class="relative flex flex-col h-full hover:cursor-pointer group w-[105px] sm:w-[135px] md:w-[155px] xl:w-[175px]">
-                        <div class="flex-shrink-0 absolute top-0 right-0 flex font-medium items-center justify-center gap-[.4rem] bg-black/60 backdrop-blur text-white !text-xs line-clamp-1 z-[7] px-2 py-1 rounded-bl-lg tracking-wider">
-                          <span class="hidden md:flex">Episode</span><span class="md:hidden">Ep</span> <span class="font-medium text-purple-400">{anime.episode}</span>
-                        </div>
-                        <div class="relative h-[160px] w-[105px] sm:w-[135px] sm:h-[190px] md:h-[230px] md:w-[155px] xl:h-[255px] xl:w-[175px] rounded-xl xl:rounded-2xl">
-                          <div class="w-full h-full rounded-xl xl:rounded-2xl overflow-hidden bg-[#1e1e24] aspect-[15/9] flex-shrink-0 shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)] group">
-                            <img
-                              alt="{anime.judul}"
-                              loading="eager"
-                              width="155"
-                              height="230"
-                              decoding="async"
-                              data-nimg="1"
-                              class="w-full h-full object-cover rounded-xl xl:rounded-2xl transition-transform duration-300 group-hover:scale-105"
-                              style="color: transparent;"
-                              src="{anime.gambar}"
-                            />
-                          </div>
-                          <div class="w-full h-full rounded absolute group-hover:bg-gradient-to-t from-black/85 to-transparent opacity-0 group-hover:opacity-100 top-0 z-[5] transition-all duration-300 ease justify-center">
-                            <div class="bottom-4 left-0 right-0 absolute text-xs font-medium flex flex-wrap items-center justify-center gap-[.3rem] z-[7]">
-                              <span class="uppercase">Ep {anime.episode}</span> <span class="text-[10px]">•</span><span class="font-semibold text-green-400">{anime.jenis}</span><span class="text-[10px]">
-                            </div>
-                          </div>
-                        </div>
-                        <span class="overflow-hidden text-center text-[#d1d7e0] pt-1.5 px-1.5 sm:px-2 text-xs sm:text-sm font-medium line-clamp-2">
-                          <span class="aspect-square w-2 h-2 inline-block mr-1 rounded-full bg-green-500 xl:hidden"></span> {anime.judul}
-                        </span>
-                      </div>
-                    </a>
+          <a href="{anime.link}" style="cursor: pointer;">
+            <div class="relative flex flex-col h-full hover:cursor-pointer group w-[105px] sm:w-[135px] md:w-[155px] xl:w-[175px]">
+              <div class="flex-shrink-0 absolute top-0 right-0 flex font-medium items-center justify-center gap-[.4rem] bg-black/60 backdrop-blur text-white !text-xs line-clamp-1 z-[7] px-2 py-1 rounded-bl-lg tracking-wider">
+                <span class="hidden md:flex">Episode</span><span class="md:hidden">Ep</span> <span class="font-medium text-purple-400">{anime.episode}</span>
+              </div>
+              <div class="relative h-[160px] w-[105px] sm:w-[135px] sm:h-[190px] md:h-[230px] md:w-[155px] xl:h-[255px] xl:w-[175px] rounded-xl xl:rounded-2xl">
+                <div class="w-full h-full rounded-xl xl:rounded-2xl overflow-hidden bg-[#1e1e24] aspect-[15/9] flex-shrink-0 shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)] group">
+                  <img
+                    alt="{anime.judul}"
+                    loading="lazy"  <!-- Updated to lazy loading -->
+                    width="155"
+                    height="230"
+                    decoding="async"
+                    data-nimg="1"
+                    class="w-full h-full object-cover rounded-xl xl:rounded-2xl transition-transform duration-300 group-hover:scale-105"
+                    style="color: transparent;"
+                    src="{anime.gambar}"
+                  />
+                </div>
+                <div class="w-full h-full rounded absolute group-hover:bg-gradient-to-t from-black/85 to-transparent opacity-0 group-hover:opacity-100 top-0 z-[5] transition-all duration-300 ease justify-center">
+                  <div class="bottom-4 left-0 right-0 absolute text-xs font-medium flex flex-wrap items-center justify-center gap-[.3rem] z-[7]">
+                    <span class="uppercase">Ep {anime.episode}</span> <span class="text-[10px]">•</span><span class="font-semibold text-green-400">{anime.jenis}</span><span class="text-[10px]">
+                  </div>
+                </div>
+              </div>
+              <span class="overflow-hidden text-center text-[#d1d7e0] pt-1.5 px-1.5 sm:px-2 text-xs sm:text-sm font-medium line-clamp-2">
+                <span class="aspect-square w-2 h-2 inline-block mr-1 rounded-full bg-green-500 xl:hidden"></span> {anime.judul}
+              </span>
+            </div>
+          </a>
         {/each}
       </div>
     </div>
