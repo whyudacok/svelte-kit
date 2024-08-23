@@ -1,6 +1,6 @@
 
 <script>
-  import AnimeUpdate from '../../components/AnimeUpdate.svelte';
+  import AnimeUpdate from './components/AnimeUpdate.svelte';
 </script>
 
 <div class="flex flex-row transition-all duration-300 ease-in-out">
