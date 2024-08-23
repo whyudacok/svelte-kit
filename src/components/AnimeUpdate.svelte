@@ -32,6 +32,11 @@
       loading = false;
     }
   });
+
+  function getAnimeLink(anime) {
+    // Cek format link anime dan sesuaikan
+    return anime.link.startsWith('/anime/') ? anime.link : `/episode/${anime.link}`;
+  }
 </script>
 
 {#if loading}
@@ -57,7 +62,7 @@
       </span>
       <div class="relative flex flex-nowrap overflow-scroll overflow-y-hidden gap-3 scrollbar-hide pl-[0.75rem] xl:pl-0" id="Popular This Season" style="cursor: auto;">
         {#each animeData as anime}
-        <a href="{anime.link}" style="cursor: pointer;">
+        <a href="{getAnimeLink(anime)}" style="cursor: pointer;">
           <div class="relative flex flex-col h-full hover:cursor-pointer group w-[105px] sm:w-[135px] md:w-[155px] xl:w-[175px]">
             <div class="flex-shrink-0 absolute top-0 right-0 flex font-medium items-center justify-center gap-[.4rem] bg-black/60 backdrop-blur text-white !text-xs line-clamp-1 z-[7] px-2 py-1 rounded-bl-lg tracking-wider">
               <span class="hidden md:flex">Episode</span><span class="md:hidden">Ep</span> <span class="font-medium text-purple-400">{anime.episode}</span>
