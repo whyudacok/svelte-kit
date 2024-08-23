@@ -1,37 +1,48 @@
-<script context="module">
-  export async function load({ params }) {
-    try {
-      const { endpo } = params;
-      const response = await fetch(`https://cihuyy-api.vercel.app/api/anime/anime/${endpo}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch: ${response.statusText}`);
-      }
-      const data = await response.json();
-      return { props: { anime: data.data } };
-    } catch (error) {
-      return { status: 500, error: new Error('Failed to load anime data') };
-    }
-  }
-</script>
-
 <script>
-  export let anime;
+  import { onMount } from "svelte";
+
+  let animeData = null;
+  let loading = true;
+  let error = null;
+  let { endpo } = $page.params;
+
+  onMount(async () => {
+    try {
+      const res = await fetch(`https://cihuyy-api.vercel.app/api/anime/anime/${endpo}`);
+      const data = await res.json();
+
+      if (data.status) {
+        animeData = data.data;
+      } else {
+        error = "Anime data not found or error in fetching.";
+      }
+    } catch (err) {
+      console.error("Failed to fetch data:", err);
+      error = "An error occurred while fetching the anime data.";
+    } finally {
+      loading = false;
+    }
+  });
 </script>
 
-{#if anime}
-  <h1>{anime.title}</h1>
-  <p><strong>Rating:</strong> {anime.rating}</p>
-  <p><strong>Status:</strong> {anime.info.Status}</p>
-  <p><strong>Studio:</strong> {anime.info.Studio}</p>
-  <p><strong>Durasi:</strong> {anime.info.Durasi}</p>
-  <p><strong>Musim:</strong> {anime.info.Musim}</p>
+{#if loading}
+  <p>Loading...</p>
+{:else if error}
+  <p>{error}</p>
+{:else}
+  <h1>{animeData.title}</h1>
+  <p><strong>Rating:</strong> {animeData.rating}</p>
+  <p><strong>Status:</strong> {animeData.info.Status}</p>
+  <p><strong>Studio:</strong> {animeData.info.Studio}</p>
+  <p><strong>Durasi:</strong> {animeData.info.Durasi}</p>
+  <p><strong>Musim:</strong> {animeData.info.Musim}</p>
 
   <h2>Sinopsis</h2>
-  <p>{anime.sinopsis}</p>
+  <p>{animeData.sinopsis}</p>
 
   <h2>Episode List</h2>
   <ul>
-    {#each anime.eplister as episode}
+    {#each animeData.eplister as episode}
       <li>
         <a href={episode.link}>{episode.title} - {episode.epnum}</a>
         <p>{episode.date}</p>
@@ -41,10 +52,10 @@
 
   <h2>Recommendations</h2>
   <ul>
-    {#each anime.recommendations as rec}
+    {#each animeData.recommendations as rec}
       <li>
         <a href={rec.link}>
-          <img src={rec.img} alt={rec.title} />
+          <img src={rec.img} alt={rec.title} width="100" />
           {rec.title} ({rec.type}) - {rec.epx}
         </a>
       </li>
@@ -53,7 +64,7 @@
 
   <h2>Download Links</h2>
   <ul>
-    {#each anime.downloads as download}
+    {#each animeData.downloads as download}
       <li>
         <h3>{download.server}</h3>
         <ul>
@@ -64,6 +75,4 @@
       </li>
     {/each}
   </ul>
-{:else}
-  <p>Failed to load anime data.</p>
 {/if}
