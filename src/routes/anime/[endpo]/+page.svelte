@@ -9,6 +9,12 @@
   onMount(async () => {
     try {
       const res = await fetch(`https://cihuyy-api.vercel.app/api/anime/anime/${endpo}`);
+
+      // Cek status respons
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
       const data = await res.json();
 
       if (data.status) {
@@ -33,9 +39,16 @@
   <h1>{animeData.title}</h1>
   <p><strong>Rating:</strong> {animeData.rating}</p>
   <p><strong>Status:</strong> {animeData.info.Status}</p>
-  <p><strong>Studio:</strong> {animeData.info.Studio}</p>
+  <p><strong>Studio:</strong> <a href={animeData.info.Studio_link}>{animeData.info.Studio}</a></p>
   <p><strong>Durasi:</strong> {animeData.info.Durasi}</p>
-  <p><strong>Musim:</strong> {animeData.info.Musim}</p>
+  <p><strong>Musim:</strong> <a href={animeData.info.Musim_link}>{animeData.info.Musim}</a></p>
+
+  <h2>Genre</h2>
+  <ul>
+    {#each animeData.genre as genre}
+      <li><a href={genre.link}>{genre.name}</a></li>
+    {/each}
+  </ul>
 
   <h2>Sinopsis</h2>
   <p>{animeData.sinopsis}</p>
