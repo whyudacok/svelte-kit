@@ -5,14 +5,14 @@
   let animeData = {};
   let loading = true;
   let error = false;
-  
+
   $: endpoint = $page.params.end;
 
   onMount(async () => {
     try {
       const res = await fetch(`https://cihuyy-api.vercel.app/api/anime/${endpoint}`);
       const data = await res.json();
-      
+
       if (data.status) {
         animeData = data.data;
       } else {
@@ -58,12 +58,12 @@
 
     <h3>Detail</h3>
     <ul>
-      <li>Status: {animeData.detail.Status}</li>
+      <li>Status: {animeData.detail["Status"]}</li>
       <li>Studio: <a href="{animeData.detail.Studio.link}">{animeData.detail.Studio.text}</a></li>
       <li>Telah Rilis: {animeData.detail["Telah rilis"]}</li>
-      <li>Durasi: {animeData.detail.Durasi}</li>
+      <li>Durasi: {animeData.detail["Durasi"]}</li>
       <li>Musim: <a href="{animeData.detail.Musim.link}">{animeData.detail.Musim.text}</a></li>
-      <li>Jenis: {animeData.detail.Jenis}</li>
+      <li>Jenis: {animeData.detail["Jenis"]}</li>
       <li>Pengarang: <a href="{animeData.detail.Pengarang.link}">{animeData.detail.Pengarang.text}</a></li>
     </ul>
 
