@@ -1,5 +1,5 @@
 <script>
-  const apiUrl = import.meta.env.VITE_API_URL
+  const apiUrl = import.meta.env.VITE_API_URL;
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
 
@@ -18,13 +18,16 @@
         throw new Error('Failed to fetch data');
       }
       const data = await response.json();
-      animeData = data.status ? data.data : null;
-      if (!animeData) {
+      if (data.status) {
+        animeData = data.data;
+      } else {
         error = "Anime data not found or error in fetching.";
+        window.history.back(); // Kembali ke halaman sebelumnya
       }
     } catch (err) {
       console.error('Failed to fetch data:', err);
       error = 'An error occurred while fetching the anime data.';
+      window.history.back(); // Kembali ke halaman sebelumnya
     }
   });
 </script>
