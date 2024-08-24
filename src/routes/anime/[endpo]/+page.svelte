@@ -93,7 +93,7 @@
     <ul>
       {#each animeData.eplister as episode}
         <li>
-          <a href={episode.link}>{episode.title} - {episode.epnum}</a>
+          <a href=/episode{episode.link}>{episode.title} - {episode.epnum}</a>
           <p>{episode.date}</p>
         </li>
       {/each}
