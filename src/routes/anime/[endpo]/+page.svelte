@@ -1,4 +1,5 @@
 <script>
+  import { goto } from '$app/navigation';
   const apiUrl = import.meta.env.VITE_API_URL;
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
@@ -30,6 +31,10 @@
       window.history.back(); // Kembali ke halaman sebelumnya
     }
   });
+function handleLinkClick(event, url) {
+    event.preventDefault(); // Mencegah pemuatan ulang halaman
+    goto(url); // Navigasi internal dengan SvelteKit
+  }
 </script>
 
 <svelte:head>
@@ -77,17 +82,17 @@
       {/each}
     </ul>
 
-    <h2>Recommendations</h2>
-    <ul>
-      {#each animeData.recommendations as rec}
-        <li>
-          <a href={rec.link}>
-            <img src={rec.img} alt={rec.title} width="100" />
-            {rec.title} ({rec.type}) - {rec.epx}
-          </a>
-        </li>
-      {/each}
-    </ul>
+<h2>Recommendations</h2>
+<ul>
+  {#each animeData.recommendations as rec}
+    <li>
+      <a href={`${rec.endpoint}`} on:click={(event) => handleLinkClick(event, `${rec.endpoint}`)}>
+        <img src={rec.img} alt={rec.title} width="100" />
+        {rec.title} ({rec.type}) - {rec.epx}
+      </a>
+    </li>
+  {/each}
+</ul>
 
     <h2>Download Links</h2>
     <ul>
