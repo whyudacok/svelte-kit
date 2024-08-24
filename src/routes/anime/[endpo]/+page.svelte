@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onMount, afterUpdate } from 'svelte';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
 
@@ -9,11 +9,13 @@
   let error = null;
   let animeId;
 
-  $: {
-    animeId = $page.params.endpo;  // Ambil parameter dari URL
-  }
+  // Ambil parameter dari URL setiap kali halaman dimuat
+  $: animeId = $page.params.endpo;
 
-  onMount(async () => {
+  // Fungsi untuk memuat data anime
+  async function loadAnimeData() {
+    animeData = null; // Reset data
+    error = null; // Reset error
     try {
       const response = await fetch(`${apiUrl}/api/anime/anime/${animeId}`);
       if (!response.ok) {
@@ -29,6 +31,23 @@
       console.error('Failed to fetch data:', err);
       error = 'An error occurred while fetching the anime data.';
     }
+  }
+
+  // Load data on mount and whenever animeId changes
+  onMount(() => {
+    loadAnimeData();
+  });
+
+  // Update meta tags after the data is loaded
+  afterUpdate(() => {
+    if (animeData) {
+      document.title = animeData.title;
+      document.querySelector('meta[name="description"]').content = animeData.sinopsis;
+      document.querySelector('meta[property="og:title"]').content = animeData.title;
+      document.querySelector('meta[property="og:description"]').content = animeData.sinopsis;
+      document.querySelector('meta[property="og:url"]').content = `https://your-site-url.com/anime/${animeId}`;
+      document.querySelector('meta[property="og:image"]').content = animeData.thumbnail;
+    }
   });
 
   function goHome() {
@@ -42,21 +61,12 @@
 </script>
 
 <svelte:head>
-  {#if animeData}
-    <title>{animeData.title}</title>
-    <meta name="description" content={animeData.sinopsis} />
-    <meta property="og:title" content={animeData.title} />
-    <meta property="og:description" content={animeData.sinopsis} />
-    <meta property="og:url" content={`https://your-site-url.com/anime/${animeId}`} />
-    <meta property="og:image" content={animeData.thumbnail} />
-  {:else}
-    <title>Loading...</title>
-    <meta name="description" content="Loading..." />
-    <meta property="og:title" content="Loading..." />
-    <meta property="og:description" content="Loading..." />
-    <meta property="og:url" content="https://your-site-url.com/anime" />
-    <meta property="og:image" content="https://your-site-url.com/default-thumbnail.jpg" />
-  {/if}
+  <title>{animeData ? animeData.title : 'Loading...'}</title>
+  <meta name="description" content={animeData ? animeData.sinopsis : 'Loading...'} />
+  <meta property="og:title" content={animeData ? animeData.title : 'Loading...'} />
+  <meta property="og:description" content={animeData ? animeData.sinopsis : 'Loading...'} />
+  <meta property="og:url" content={animeData ? `https://your-site-url.com/anime/${animeId}` : 'https://your-site-url.com/anime'} />
+  <meta property="og:image" content={animeData ? animeData.thumbnail : 'https://your-site-url.com/default-thumbnail.jpg'} />
 </svelte:head>
 
 <main>
