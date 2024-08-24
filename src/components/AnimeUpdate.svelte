@@ -39,10 +39,10 @@
     return anime.link.startsWith('/anime/') ? anime.link : `/episode/${anime.link}`;
   }
 
-  function handleClick(anime) {
-    // Navigasi menggunakan goto dari SvelteKit
+  function handleClick(event, anime) {
+    event.preventDefault(); // Mencegah aksi default
     const link = getAnimeLink(anime);
-    goto(link);
+    goto(link); // Navigasi menggunakan goto dari SvelteKit
   }
 </script>
 
@@ -69,32 +69,34 @@
       </span>
       <div class="relative flex flex-nowrap overflow-scroll overflow-y-hidden gap-3 scrollbar-hide pl-[0.75rem] xl:pl-0" id="Popular This Season" style="cursor: auto;">
         {#each animeData as anime}
-          <div class="relative flex flex-col h-full hover:cursor-pointer group w-[105px] sm:w-[135px] md:w-[155px] xl:w-[175px]" on:click={() => handleClick(anime)} style="cursor: pointer;">
-            <div class="flex-shrink-0 absolute top-0 right-0 flex font-medium items-center justify-center gap-[.4rem] bg-black/60 backdrop-blur text-white !text-xs line-clamp-1 z-[7] px-2 py-1 rounded-bl-lg tracking-wider">
-              <span class="hidden md:flex">Episode</span><span class="md:hidden">Ep</span> <span class="font-medium text-purple-400">{anime.episode}</span>
-            </div>
-            <div class="relative h-[160px] w-[105px] sm:w-[135px] sm:h-[190px] md:h-[230px] md:w-[155px] xl:h-[255px] xl:w-[175px] rounded-xl xl:rounded-2xl">
-              <div class="w-full h-full rounded-xl xl:rounded-2xl overflow-hidden bg-[#1e1e24] aspect-[15/9] flex-shrink-0 shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)] group">
-                <img
-                  alt="{anime.judul}"
-                  loading="lazy"
-                  width="155"
-                  height="230"
-                  decoding="async"
-                  class="w-full h-full object-cover rounded-xl xl:rounded-2xl transition-transform duration-300 group-hover:scale-105"
-                  src="{anime.gambar}"
-                />
+          <a href="{getAnimeLink(anime)}" on:click={(event) => handleClick(event, anime)} style="cursor: pointer;">
+            <div class="relative flex flex-col h-full hover:cursor-pointer group w-[105px] sm:w-[135px] md:w-[155px] xl:w-[175px]">
+              <div class="flex-shrink-0 absolute top-0 right-0 flex font-medium items-center justify-center gap-[.4rem] bg-black/60 backdrop-blur text-white !text-xs line-clamp-1 z-[7] px-2 py-1 rounded-bl-lg tracking-wider">
+                <span class="hidden md:flex">Episode</span><span class="md:hidden">Ep</span> <span class="font-medium text-purple-400">{anime.episode}</span>
               </div>
-              <div class="w-full h-full rounded absolute group-hover:bg-gradient-to-t from-black/85 to-transparent opacity-0 group-hover:opacity-100 top-0 z-[5] transition-all duration-300 ease justify-center">
-                <div class="bottom-4 left-0 right-0 absolute text-xs font-medium flex flex-wrap items-center justify-center gap-[.3rem] z-[7]">
-                  <span class="uppercase">Ep {anime.episode}</span> <span class="text-[10px]">•</span><span class="font-semibold text-green-400">{anime.jenis}</span><span class="text-[10px]">
+              <div class="relative h-[160px] w-[105px] sm:w-[135px] sm:h-[190px] md:h-[230px] md:w-[155px] xl:h-[255px] xl:w-[175px] rounded-xl xl:rounded-2xl">
+                <div class="w-full h-full rounded-xl xl:rounded-2xl overflow-hidden bg-[#1e1e24] aspect-[15/9] flex-shrink-0 shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)] group">
+                  <img
+                    alt="{anime.judul}"
+                    loading="lazy"
+                    width="155"
+                    height="230"
+                    decoding="async"
+                    class="w-full h-full object-cover rounded-xl xl:rounded-2xl transition-transform duration-300 group-hover:scale-105"
+                    src="{anime.gambar}"
+                  />
+                </div>
+                <div class="w-full h-full rounded absolute group-hover:bg-gradient-to-t from-black/85 to-transparent opacity-0 group-hover:opacity-100 top-0 z-[5] transition-all duration-300 ease justify-center">
+                  <div class="bottom-4 left-0 right-0 absolute text-xs font-medium flex flex-wrap items-center justify-center gap-[.3rem] z-[7]">
+                    <span class="uppercase">Ep {anime.episode}</span> <span class="text-[10px]">•</span><span class="font-semibold text-green-400">{anime.jenis}</span><span class="text-[10px]">
+                  </div>
                 </div>
               </div>
+              <span class="overflow-hidden text-center text-[#d1d7e0] pt-1.5 px-1.5 sm:px-2 text-xs sm:text-sm font-medium line-clamp-2">
+                <span class="aspect-square w-2 h-2 inline-block mr-1 rounded-full bg-green-500 xl:hidden"></span> {anime.judul}
+              </span>
             </div>
-            <span class="overflow-hidden text-center text-[#d1d7e0] pt-1.5 px-1.5 sm:px-2 text-xs sm:text-sm font-medium line-clamp-2">
-              <span class="aspect-square w-2 h-2 inline-block mr-1 rounded-full bg-green-500 xl:hidden"></span> {anime.judul}
-            </span>
-          </div>
+          </a>
         {/each}
       </div>
     </div>
