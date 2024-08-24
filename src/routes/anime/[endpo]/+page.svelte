@@ -22,26 +22,32 @@
       const data = await response.json();
       if (data.status) {
         animeData = data.data;
+        updateMetaTags(); // Update meta tags setelah data dimuat
       } else {
         error = "Anime data not found or error in fetching.";
-        // Redirect ke halaman utama
-        setTimeout(() => {
-          goto('/'); // Arahkan ke halaman utama
-        }, 3000);
       }
     } catch (err) {
       console.error('Failed to fetch data:', err);
       error = 'An error occurred while fetching the anime data.';
-      // Redirect ke halaman utama
-      setTimeout(() => {
-        goto('/'); // Arahkan ke halaman utama
-      }, 3000);
     }
   });
 
-  function handleLinkClick(event, url) {
+  function updateMetaTags() {
+    document.title = animeData ? animeData.title : 'Loading...';
+    document.querySelector('meta[name="description"]').content = animeData ? animeData.sinopsis : 'Loading...';
+    document.querySelector('meta[property="og:title"]').content = animeData ? animeData.title : 'Loading...';
+    document.querySelector('meta[property="og:description"]').content = animeData ? animeData.sinopsis : 'Loading...';
+    document.querySelector('meta[property="og:url"]').content = animeData ? `https://your-site-url.com/anime/${animeId}` : 'https://your-site-url.com/anime';
+    document.querySelector('meta[property="og:image"]').content = animeData ? animeData.thumbnail : 'https://your-site-url.com/default-thumbnail.jpg';
+  }
+
+  function goHome() {
+    goto('/'); // Navigasi ke halaman utama
+  }
+
+  function handleLinkClick(event, link) {
     event.preventDefault(); // Mencegah pemuatan ulang halaman
-    goto(url); // Navigasi internal dengan SvelteKit
+    goto(link); // Navigasi internal dengan SvelteKit
   }
 </script>
 
@@ -56,7 +62,10 @@
 
 <main>
   {#if error}
-    <p>Terjadi masalah saat mengambil data. Kamu akan diarahkan kembali ke halaman utama dalam beberapa detik...</p>
+    <div>
+      <p>{error}</p>
+      <button on:click={goHome}>Kembali ke Halaman Utama</button>
+    </div>
   {:else if !animeData}
     <p>Loading...</p>
   {:else}
@@ -94,7 +103,7 @@
     <ul>
       {#each animeData.recommendations as rec}
         <li>
-          <a href={`${rec.link}`} on:click={(event) => handleLinkClick(event, `${rec.link}`)}>
+          <a href={rec.link} on:click={(event) => handleLinkClick(event, rec.link)}>
             <img src={rec.img} alt={rec.title} width="100" />
             {rec.title} ({rec.type}) - {rec.epx}
           </a>
