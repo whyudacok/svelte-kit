@@ -1,8 +1,9 @@
 <script>
-  import { goto } from '$app/navigation';
-  const apiUrl = import.meta.env.VITE_API_URL;
   import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
   import { page } from '$app/stores';
+
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   let animeData = null;
   let error = null;
@@ -23,15 +24,22 @@
         animeData = data.data;
       } else {
         error = "Anime data not found or error in fetching.";
-        window.history.back(); // Kembali ke halaman sebelumnya
+        // Redirect with a delay
+        setTimeout(() => {
+          window.history.back();
+        }, 3000);
       }
     } catch (err) {
       console.error('Failed to fetch data:', err);
       error = 'An error occurred while fetching the anime data.';
-      window.history.back(); // Kembali ke halaman sebelumnya
+      // Redirect with a delay
+      setTimeout(() => {
+        window.history.back();
+      }, 3000);
     }
   });
-function handleLinkClick(event, url) {
+
+  function handleLinkClick(event, url) {
     event.preventDefault(); // Mencegah pemuatan ulang halaman
     goto(url); // Navigasi internal dengan SvelteKit
   }
@@ -48,7 +56,7 @@ function handleLinkClick(event, url) {
 
 <main>
   {#if error}
-    <p>{error}</p>
+    <p>Terjadi masalah saat mengambil data. Kamu akan diarahkan kembali ke halaman sebelumnya dalam beberapa detik...</p>
   {:else if !animeData}
     <p>Loading...</p>
   {:else}
@@ -82,17 +90,17 @@ function handleLinkClick(event, url) {
       {/each}
     </ul>
 
-<h2>Recommendations</h2>
-<ul>
-  {#each animeData.recommendations as rec}
-    <li>
-      <a href={`${rec.endpoint}`} on:click={(event) => handleLinkClick(event, `${rec.endpoint}`)}>
-        <img src={rec.img} alt={rec.title} width="100" />
-        {rec.title} ({rec.type}) - {rec.epx}
-      </a>
-    </li>
-  {/each}
-</ul>
+    <h2>Recommendations</h2>
+    <ul>
+      {#each animeData.recommendations as rec}
+        <li>
+          <a href={`${rec.endpoint}`} on:click={(event) => handleLinkClick(event, `${rec.endpoint}`)}>
+            <img src={rec.img} alt={rec.title} width="100" />
+            {rec.title} ({rec.type}) - {rec.epx}
+          </a>
+        </li>
+      {/each}
+    </ul>
 
     <h2>Download Links</h2>
     <ul>
