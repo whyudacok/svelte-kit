@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import { navigate } from '@sveltejs/kit/navigation';
+  import { goto } from '@sveltejs/kit';
 
   let animeData = [];
   let loading = true;
