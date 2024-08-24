@@ -24,17 +24,17 @@
         animeData = data.data;
       } else {
         error = "Anime data not found or error in fetching.";
-        // Redirect with a delay
+        // Redirect ke halaman utama
         setTimeout(() => {
-          window.history.back();
+          goto('/'); // Arahkan ke halaman utama
         }, 3000);
       }
     } catch (err) {
       console.error('Failed to fetch data:', err);
       error = 'An error occurred while fetching the anime data.';
-      // Redirect with a delay
+      // Redirect ke halaman utama
       setTimeout(() => {
-        window.history.back();
+        goto('/'); // Arahkan ke halaman utama
       }, 3000);
     }
   });
@@ -56,7 +56,7 @@
 
 <main>
   {#if error}
-    <p>Terjadi masalah saat mengambil data. Kamu akan diarahkan kembali ke halaman sebelumnya dalam beberapa detik...</p>
+    <p>Terjadi masalah saat mengambil data. Kamu akan diarahkan kembali ke halaman utama dalam beberapa detik...</p>
   {:else if !animeData}
     <p>Loading...</p>
   {:else}
@@ -94,7 +94,7 @@
     <ul>
       {#each animeData.recommendations as rec}
         <li>
-          <a href={`${rec.endpoint}`} on:click={(event) => handleLinkClick(event, `${rec.endpoint}`)}>
+          <a href={`${rec.link}`} on:click={(event) => handleLinkClick(event, `${rec.link}`)}>
             <img src={rec.img} alt={rec.title} width="100" />
             {rec.title} ({rec.type}) - {rec.epx}
           </a>
